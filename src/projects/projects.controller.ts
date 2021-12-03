@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Res } from '@nestjs/common';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';
 
+@ApiTags('projects')
 @Controller('projects')
 export class ProjectsController {
 
@@ -13,23 +15,28 @@ export class ProjectsController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
-    getManyProjects(): Project[] {
+    getManyProjects(): Promise<Project[]> {
         return this.projectsService.getManyProjects();
     }
 
     @HttpCode(HttpStatus.OK)
     @Get(':projectId')
-    getOneProject(
+    async getOneProject(
         @Param('projectId') projectId: number,
-    ): Project {
-        return this.projectsService.getOneProject(projectId);
+    ): Promise<Project> {
+        const project = await this.projectsService.getOneProject(projectId);
+        if (!project) {
+            throw new NotFoundException(`Proyecto con id ${projectId} no existe`);
+        }
+
+        return project;
     }
 
     @HttpCode(HttpStatus.CREATED)
     @Post()
     createOneproject(
         @Body() projectDto: CreateProjectDto
-    ): Project {
+    ): Promise<Project> {
         return this.projectsService.createOneproject(projectDto);
     }
 
@@ -38,8 +45,7 @@ export class ProjectsController {
     partialUpdateOneProject(
         @Param('projectId', ParseIntPipe) projectId: number,
         @Body() updateProjectDto: UpdateProjectDto,
-    ): Project {
-        console.log(projectId);
+    ): Promise<Project> {
         return this.projectsService.partialUpdateOneProject(projectId, updateProjectDto);
     }
 
