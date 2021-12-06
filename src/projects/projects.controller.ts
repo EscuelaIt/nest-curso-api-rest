@@ -22,7 +22,7 @@ export class ProjectsController {
     @HttpCode(HttpStatus.OK)
     @Get(':projectId')
     async getOneProject(
-        @Param('projectId') projectId: number,
+        @Param('projectId', ParseIntPipe) projectId: number,
     ): Promise<Project> {
         const project = await this.projectsService.getOneProject(projectId);
         if (!project) {
