@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { WorkTimeLog } from "src/work-time-logs/entities/work-time-log.entity";
+import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('projects')
 export class Project {
@@ -24,4 +25,8 @@ export class Project {
     plannedHours: number;
 
     owner?: any;
+
+
+    @OneToMany(() => WorkTimeLog, workTimeLog => workTimeLog.project )
+    workTimeLogs: WorkTimeLog[];
 }

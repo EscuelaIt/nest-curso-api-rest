@@ -1,17 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { WorkTimeLogsService } from './work-time-logs.service';
 import { CreateWorkTimeLogDto } from './dto/create-work-time-log.dto';
 import { UpdateWorkTimeLogDto } from './dto/update-work-time-log.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { User } from 'src/users/entities/user.entity';
 
 @ApiTags('work-time-logs')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('work-time-logs')
 export class WorkTimeLogsController {
   constructor(private readonly workTimeLogsService: WorkTimeLogsService) {}
 
   @Post()
   create(@Body() createWorkTimeLogDto: CreateWorkTimeLogDto) {
-    return this.workTimeLogsService.create(createWorkTimeLogDto);
+
+    const user: User = {
+      id: 3,
+      username: 'miusername',
+      email: 'miusername@gmail.com',
+      password: 'pass',
+      name: 'Alberto',
+      lastName: 'Morales'
+    };
+
+    return this.workTimeLogsService.create(createWorkTimeLogDto, user);
   }
 
   @Get()

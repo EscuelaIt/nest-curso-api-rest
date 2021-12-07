@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from "@nestjs/mapped-types";
+import { OmitType, PartialType } from "@nestjs/swagger";
 import { IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 import { CreateProjectDto } from "./create-project.dto";
 

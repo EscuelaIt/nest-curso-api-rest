@@ -3,22 +3,38 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from './projects/projects.module';
 import { WorkTimeLogsModule } from './work-time-logs/work-time-logs.module';
 import { TotalTimeLogsModule } from './total-time-logs/total-time-logs.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+      envFilePath: ['.env'],
+    }),
+    /*TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5436,
-      username: 'user_cursonest',
-      password: 'password_cursonest',
-      database: 'db_cursonest2',
+      host: process.env.DATABASE_HOST,
+      port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      synchronize: process.env.DATABASE_SYNC==='true',
       autoLoadEntities: true,
-      synchronize: true,
+    }),*/
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ...configService.get('database')
+      })
     }),
     ProjectsModule,
     WorkTimeLogsModule,
-    TotalTimeLogsModule],
+    TotalTimeLogsModule,
+    UsersModule],
   controllers: [],
   providers: [],
 })

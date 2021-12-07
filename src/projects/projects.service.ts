@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
-
+/*
 const mock:Project[] = [
     {
         id: 1,
@@ -31,6 +31,7 @@ const mock:Project[] = [
         owner: 'miowner',
     }  
 ]
+*/
 
 @Injectable()
 export class ProjectsService {
