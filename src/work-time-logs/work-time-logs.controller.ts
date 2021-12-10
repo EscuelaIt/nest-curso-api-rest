@@ -14,14 +14,14 @@ export class WorkTimeLogsController {
   @Post()
   create(@Body() createWorkTimeLogDto: CreateWorkTimeLogDto) {
 
-    const user: User = {
+    const user = {
       id: 3,
       username: 'miusername',
       email: 'miusername@gmail.com',
       password: 'pass',
       name: 'Alberto',
       lastName: 'Morales'
-    };
+    } as User;
 
     return this.workTimeLogsService.create(createWorkTimeLogDto, user);
   }
