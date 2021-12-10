@@ -1,0 +1,14 @@
+{
+    "type": "postgres",
+    "host": "sadsa",
+    "port": 5432,
+    "username": "aa",
+    "password": "asdsa",
+    "database": "sadsad",
+    "entities": ["dist/**/*.entity.js"],
+    "migrations": ["dist/migrations/*.js"],
+    "migrationsTableName": "migrations_typeorm",
+    "cli": {
+      "migrationsDir": "src/migrations"
+    }
+}

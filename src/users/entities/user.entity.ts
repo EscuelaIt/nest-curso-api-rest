@@ -14,14 +14,17 @@ export class User {
     @Column({ type: 'varchar' })
     password: string;
 
-    @Column({ type: 'varchar' })
-    name: string;
-
-    @Column({ type: 'varchar' })
-    lastName: string;
-
     @Column({ type: 'varchar', unique: true })
     email: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    name?: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    lastName?: string;
+
+    @Column({ type: 'integer', nullable: true })
+    phoneNumber?: number;
 
     @OneToMany(() => WorkTimeLog, workTimeLog => workTimeLog.user )
     workTimeLogs?: WorkTimeLog[]
