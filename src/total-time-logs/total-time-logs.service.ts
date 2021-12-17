@@ -1,26 +1,44 @@
 import { Injectable } from '@nestjs/common';
+import { Project } from 'src/projects/entities/project.entity';
+import { User } from 'src/users/entities/user.entity';
+import { WorkTimeLogsService } from 'src/work-time-logs/work-time-logs.service';
 import { CreateTotalTimeLogDto } from './dto/create-total-time-log.dto';
 import { UpdateTotalTimeLogDto } from './dto/update-total-time-log.dto';
+import { TotalTimeLog } from './entities/total-time-log.entity';
 
 @Injectable()
 export class TotalTimeLogsService {
-  create(createTotalTimeLogDto: CreateTotalTimeLogDto) {
-    return 'This action adds a new totalTimeLog';
-  }
+  
+  constructor(
+    private readonly workTimeLogService: WorkTimeLogsService,
+  ) {}
 
-  findAll() {
-    return `This action returns all totalTimeLogs`;
-  }
+  async findAll(authUser: User) {
+    const workTimeLogs = await this.workTimeLogService.findAll(authUser);
+    const map = new Map<string, TotalTimeLog>();
 
-  findOne(id: number) {
-    return `This action returns a #${id} totalTimeLog`;
-  }
+    workTimeLogs.forEach((workTimeLog) => {
+      const project = workTimeLog.project;
+      const projectKey = project.key;
+      const exist = map.get(projectKey);
 
-  update(id: number, updateTotalTimeLogDto: UpdateTotalTimeLogDto) {
-    return `This action updates a #${id} totalTimeLog`;
-  }
+      if (exist) {
+        exist.totalHours = exist.totalHours+workTimeLog.hours;
+        map.set(projectKey, exist);
+        return;
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} totalTimeLog`;
-  }
+      const totalTimeReport: TotalTimeLog = {
+        id: projectKey,
+        user: workTimeLog.user,
+        project: workTimeLog.project,
+        totalHours: workTimeLog.hours,
+      }
+      map.set(projectKey, totalTimeReport);
+
+    });
+
+    return [ ...map.values() ] as TotalTimeLog[];
+  }  
+
 }

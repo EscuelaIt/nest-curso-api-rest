@@ -43,7 +43,9 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder.where(`user.id = :id`, { id })
+    return queryBuilder.getOne();
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

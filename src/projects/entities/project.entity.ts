@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
+import { User } from "src/users/entities/user.entity";
 import { WorkTimeLog } from "src/work-time-logs/entities/work-time-log.entity";
-import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('projects')
 export class Project {
@@ -24,8 +26,16 @@ export class Project {
     @Column({ name: 'planned_hours', type: 'integer' })
     plannedHours: number;
 
-    owner?: any;
+    @Exclude()
+    @Column({ name: 'user_id' })
+    userId: number;
 
+    @ManyToOne(
+        () => User, 
+        { onUpdate: 'CASCADE', onDelete: 'NO ACTION', eager: true },
+    )
+    @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+    user: User;
 
     @OneToMany(() => WorkTimeLog, workTimeLog => workTimeLog.project )
     workTimeLogs: WorkTimeLog[];
