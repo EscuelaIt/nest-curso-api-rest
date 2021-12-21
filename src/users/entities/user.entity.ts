@@ -1,8 +1,10 @@
 import { Exclude } from "class-transformer";
 import { WorkTimeLog } from "src/work-time-logs/entities/work-time-log.entity";
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserResponseDto } from "../dto/user-response.dto";
 import * as bcrypt from 'bcrypt';
+import { UserProfile } from "./user-profile.entity";
+import { profile } from "console";
 
 @Entity('users')
 export class User {
@@ -20,14 +22,8 @@ export class User {
     @Column({ type: 'varchar', unique: true })
     email: string;
 
-    @Column({ type: 'varchar', nullable: true })
-    name?: string;
-
-    @Column({ type: 'varchar', nullable: true })
-    lastName?: string;
-
-    @Column({ type: 'integer', nullable: true })
-    phoneNumber?: number;
+    @OneToOne(() => UserProfile, profile => profile.user)
+    profile: UserProfile;
 
     @OneToMany(() => WorkTimeLog, workTimeLog => workTimeLog.user )
     workTimeLogs?: WorkTimeLog[]
@@ -50,8 +46,10 @@ export class User {
             id: user.id,
             username: user.username,
             email: user.email,
-            lastName: user.lastName,
-            name: user.name,
+            fullname: `${user.profile.name} ${user.profile.lastName}`,
+            technologies: user.profile.technologies
+            /*lastName: user.lastName,
+            name: user.name,*/
         }
 
     }

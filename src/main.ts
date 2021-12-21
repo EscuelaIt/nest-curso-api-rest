@@ -3,9 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(helmet());
+  app.enableCors();
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -19,6 +22,7 @@ async function bootstrap() {
     .setTitle('Work Time System example')
     .setDescription('The work time system API description')
     .setVersion('1.0')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'JWT')
     .addTag('auth')
     .addTag('users')
     .addTag('projects')

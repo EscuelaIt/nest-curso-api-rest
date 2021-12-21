@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsAlphanumeric, IsLowercase, IsNotEmpty, IsNumber, IsString, Length, Max, Min } from "class-validator";
+import { IsAlphanumeric, IsArray, IsLowercase, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max, Min } from "class-validator";
 
 export class CreateProjectDto {
     
@@ -26,4 +26,9 @@ export class CreateProjectDto {
     @Max(1000, { message: 'Max value 1000'})
     @IsNotEmpty()
     plannedHours: number;
+
+    @ApiProperty()
+    @IsArray()
+    @IsOptional()
+    categoriesIds?: string[]
 }
