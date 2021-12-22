@@ -1,5 +1,5 @@
 import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AuthUser } from 'src/common/auth-user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -11,6 +11,7 @@ import { ProjectsService } from './projects.service';
 import { UserProjectAffiliationType } from './types/user-project-affiliation';
 
 @ApiTags('projects')
+@ApiBearerAuth('JWT')
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)

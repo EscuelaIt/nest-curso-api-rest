@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -17,6 +17,10 @@ async function bootstrap() {
       stopAtFirstError: false, // emite un solo error por propiedad
     })
   )
+
+  app.enableVersioning({
+    type: VersioningType.MEDIA_TYPE, key:'v=',  
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Work Time System example')

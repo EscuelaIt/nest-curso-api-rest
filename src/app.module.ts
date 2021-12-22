@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import configuration from './config/configuration';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './common/roles.guard';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import configuration from './config/configuration';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        ...configService.get('database')
+        ...configService.get('database'),
+        logger: 'simple-console',
+        logging: ['error'],
       })
     }),
     ProjectsModule,
@@ -40,6 +44,11 @@ import configuration from './config/configuration';
     AuthModule,
     CategoriesModule],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

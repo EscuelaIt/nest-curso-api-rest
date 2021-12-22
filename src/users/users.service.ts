@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from 'src/roles/role.enum';
 import { Repository } from 'typeorm';
 import { CreateUserAccountDto } from './dto/create-user-account.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -40,8 +41,10 @@ export class UsersService {
     return queryBuilder.getOne();
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findAll(): Promise<User[]> {
+    return this.userRepository.find({
+      relations: ['profile'],
+    });
   }
 
   findOne(id: number) {
