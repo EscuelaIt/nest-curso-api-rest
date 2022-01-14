@@ -1,5 +1,5 @@
-import { Project } from "src/projects/entities/project.entity";
-import { User } from "src/users/entities/user.entity";
+import { Project } from "../../projects/entities/project.entity";
+import { User } from "../../users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from 'class-transformer';
 import { WorkTimeLogResponseDto } from "../dto/work-time-log-response.dto";

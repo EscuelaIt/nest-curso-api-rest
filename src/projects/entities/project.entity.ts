@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
-import { Category } from "src/categories/entities/category.entity";
-import { User } from "src/users/entities/user.entity";
-import { WorkTimeLog } from "src/work-time-logs/entities/work-time-log.entity";
+import { Category } from "../../categories/entities/category.entity";
+import { User } from "../../users/entities/user.entity";
+import { WorkTimeLog } from "../../work-time-logs/entities/work-time-log.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('projects')

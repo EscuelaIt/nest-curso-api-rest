@@ -8,14 +8,14 @@ import { Category } from './entities/category.entity';
 @Injectable()
 export class CategoriesService {
   
-  findByIds(categoriesIds: string[]): Promise<Category[]> {
-    return this.categoryRepository.findByIds(categoriesIds);
-  }
-
   constructor(
     @InjectRepository(Category)
         private readonly categoryRepository: Repository<Category>,
   ) {}
+
+  findByIds(categoriesIds: string[]): Promise<Category[]> {
+    return this.categoryRepository.findByIds(categoriesIds);
+  }
 
   create(createCategoryDto: CreateCategoryDto) {
     const tempEntity = this.categoryRepository.create(createCategoryDto);

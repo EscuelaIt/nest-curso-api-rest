@@ -17,6 +17,7 @@ import { RolesGuard } from './common/roles.guard';
       load: [configuration],
       isGlobal: true,
       envFilePath: ['.env'],
+      // envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // .env.development
     }),
     /*TypeOrmModule.forRoot({
       type: 'postgres',

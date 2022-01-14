@@ -1,5 +1,5 @@
 import { Exclude } from "class-transformer";
-import { WorkTimeLog } from "src/work-time-logs/entities/work-time-log.entity";
+import { WorkTimeLog } from "../../work-time-logs/entities/work-time-log.entity";
 import { BeforeInsert, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserResponseDto } from "../dto/user-response.dto";
 import * as bcrypt from 'bcrypt';
