@@ -61,21 +61,39 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-
-  @Post(':username/profile-picture')
+  /**
+   * En este ejemplo el fichero se almacena 
+   * en el path indicado en el storage y se 
+   * obtiene toda la informacion del mismo en
+   * el parametro fileInfo
+   * @param fileInfo 
+   */
+  @Post(':username/profile-picture-v1')  
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './files',
       }),
     })
-    
-    // FileInterceptor('file')
   )
-  uploadPicture(@UploadedFile() file: Express.Multer.File) {
+  uploadPicture1(@UploadedFile() fileInfo: Express.Multer.File) {
+    console.log(fileInfo);
+  }
+
+
+  /**
+   * En este ejemplo se obtiene el objeto file 
+   * el cual contiene el buffer de datos y a 
+   * partir de el se puede almacenar el fichero
+   * de la forma que mas convenga (Cloud Storages, local, etc)
+   * @param file 
+   */
+  @Post(':username/profile-picture-v2')
+  @UseInterceptors(
+    FileInterceptor('file')
+  )
+  uploadPicture2(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
-    // implementacion de storage
-    // fs.writeFileSync("new-image.png", file.buffer.toString());
   }
 
 }
