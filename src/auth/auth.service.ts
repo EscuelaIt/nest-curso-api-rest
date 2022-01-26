@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserAccountDto } from 'src/users/dto/create-user-account.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { TokensPayload } from './dto/authenticationResponse';
+import { RenewAccessTokenResponse, TokensPayload } from './dto/authenticationResponse';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { RefreshToken } from './entities/refresh-token.entity';
 import { TokenService } from './token.service';
 
 @Injectable()
@@ -40,6 +41,26 @@ export class AuthService {
         return await this.usersService.create(dto);
     }
 
+    async rotateTokens(refreshTokenEncoded: string): Promise<RenewAccessTokenResponse> {
+        const refreshTokenPayload = await this.tokenService.decodeRefreshToken(refreshTokenEncoded);
+        const usernameInRefreshToken = await this.tokenService.extractUserNameFromTokenPayload(refreshTokenPayload);
+        const user = await this.usersService.getOneUser(usernameInRefreshToken);
+
+        if (!user) {
+            throw new UnprocessableEntityException('User not exits')
+        }
+
+        // Revocamos el refresh token
+        const refreshToken: RefreshToken = await this.tokenService.getRefreshTokenEntity(refreshTokenPayload);
+        if (!refreshToken || refreshToken.isRevoked) {
+            throw new UnauthorizedException('Refresh token revoked')
+        }
+        await this.tokenService.revokeRefreshToken(refreshToken);
+
+        return this.generateSuccessAuthenticationResponse(user);
+
+    }
+
     private generateTokenPayload(accessToken: string, refreshToken: string): TokensPayload {
         return {
           type: 'bearer',
@@ -47,4 +68,6 @@ export class AuthService {
           refresh_token: refreshToken,
         }
     }
+
+    
 }

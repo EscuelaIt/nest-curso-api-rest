@@ -9,8 +9,7 @@ import { UserProfile } from './entities/user-profile.entity';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class UsersService {
-  
+export class UsersService {  
 
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
@@ -51,6 +50,14 @@ export class UsersService {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
     queryBuilder.where(`user.id = :id`, { id })
     return queryBuilder.getOne();
+  }
+
+  getOneUser(username: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: {
+        username: username,
+      }
+    })
   }
   
   async findOneV2(username: string, authUser: User) {

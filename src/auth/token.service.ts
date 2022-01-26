@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
@@ -6,6 +6,11 @@ import { Repository } from "typeorm";
 import { RefreshToken } from "./entities/refresh-token.entity";
 import { JWTPayload } from "./jwt-payload";
 import { SignOptions, TokenExpiredError } from 'jsonwebtoken';
+
+export interface RefreshTokenPayload {
+  jti: string;
+  sub: string;
+}
 
 @Injectable()
 export class TokenService {
@@ -63,6 +68,42 @@ export class TokenService {
     return this.jwtService.signAsync({}, opts);
     
   }
-  
+
+  async decodeRefreshToken(refreshTokenEncoded: string): Promise<RefreshTokenPayload> {
+    try {
+      const tempPayload: RefreshTokenPayload = await this.jwtService.verifyAsync(refreshTokenEncoded);
+      return {
+        sub: tempPayload.sub,
+        jti: tempPayload.jti,
+      };
+    } catch (e) {
+      if (e instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Refresh token expired')
+      } else {
+        throw new UnprocessableEntityException('Refresh token malformed')
+      }
+    }
+  }
+
+  extractUserNameFromTokenPayload(payload: RefreshTokenPayload): string {
+    const username = payload.sub
+    if (!username) {
+      throw new UnprocessableEntityException('Refresh token malformed')
+    }
+    return username;
+  }
+
+  getRefreshTokenEntity(payload: RefreshTokenPayload): Promise<RefreshToken> {
+    const tokenId = payload.jti;
+    if (!tokenId) {
+      throw new UnprocessableEntityException('Refresh token malformed')
+    }
+    return this.refreshTokenRepository.findOne(tokenId);
+  }
+
+  async revokeRefreshToken(refreshToken: RefreshToken) {
+    refreshToken.revoke(); 
+    await this.refreshTokenRepository.save(refreshToken)
+  }
   
 }
