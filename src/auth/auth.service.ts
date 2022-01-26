@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserAccountDto } from 'src/users/dto/create-user-account.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { TokensPayload } from './dto/authenticationResponse';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { TokenService } from './token.service';
 
@@ -15,11 +16,14 @@ export class AuthService {
 
     async generateSuccessAuthenticationResponse(user: User): Promise<LoginResponseDto> {
         
-        const token = await this.tokenService.generateAccessToken(user);
-        
+        const expireRefreshTokenTimeInSec = 864000; // 10 dias
+
+        const tokens = await this.tokenService.generatePairTokens(user, expireRefreshTokenTimeInSec);
+        const tokenPayload = this.generateTokenPayload(tokens.accessToken, tokens.refreshToken);
+
         return {
-            access_token: token,
             username: user.username,
+            payload: tokenPayload,
         }
 
     }
@@ -34,5 +38,13 @@ export class AuthService {
 
     async create(dto: CreateUserAccountDto): Promise<User> {
         return await this.usersService.create(dto);
+    }
+
+    private generateTokenPayload(accessToken: string, refreshToken: string): TokensPayload {
+        return {
+          type: 'bearer',
+          token: accessToken,
+          refresh_token: refreshToken,
+        }
     }
 }

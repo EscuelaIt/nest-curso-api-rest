@@ -1,4 +1,6 @@
+import { TokensPayload } from "./authenticationResponse";
+
 export class LoginResponseDto {
-    access_token: string;
+    payload: TokensPayload;
     username: string;
 }
